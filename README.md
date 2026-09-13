@@ -1,49 +1,69 @@
 # YÖN
 
-An investment-readiness and investor-matching product for early-stage startups, built as a fully interactive front-end prototype from an approved design specification.
+A founder-facing product that clarifies the path to financing and prepares the entrepreneur to walk it — built as a fully interactive front-end prototype from an approved design specification.
 
 ## Overview
 
-YÖN is a two-sided product concept: entrepreneurs measure how ready they are to raise capital and see which investors they currently qualify for, while investors define their investment criteria once and receive a pre-filtered deal flow.
+YÖN is a product for early-stage founders who need to understand where they stand before approaching any financing source. The core idea: a structured assessment produces a financing path — showing which routes make sense given the startup's current state — and a readiness diagnosis with prioritised gaps and a personalised action plan for closing them.
 
-The repository in its current state is a **front-end prototype**. All seven screens of the approved design are implemented and interactive, the readiness score and investor-match counts are computed at runtime from user input, and the flows connect end to end. There is no backend, no database and no persistence — the underlying content lives in a typed data module inside the app.
+The repository contains a front-end prototype. The product model (described below) defines the intended end-to-end journey; the prototype implements the core founder-facing interaction model. There is no backend, no database and no persistence — state and content live in a typed module inside the app.
 
-I built the application on my own, working from a finalised design document (`final_tasarım.pdf`) rather than redesigning the screens: my job was to turn a static design into a product that actually behaves like one.
-
-Status: working demo, deployed. Not a production system.
+Status: working demo deployed at https://yon-dev.vercel.app/ (preview build). Not a production system.
 
 ## The Problem
 
-Two problems sit on either side of the same table.
+Founders approaching their first financing round rarely fail because their company is fundamentally bad. They fail because they arrive unprepared — unable to answer the questions any financing source will ask, and unable to identify which of many possible gaps actually matters first.
 
-Founders raising a first round rarely fail because their company is bad — they fail because they approach investors before they can answer the questions those investors will ask, and because they cannot tell which of a dozen possible gaps actually matters. "Improve your pitch" is not actionable. "Your financial model is missing, and that is the single item that unlocks two more investors in your range" is.
+"Improve your pitch" is not actionable. "Your financial model is missing, and that is the specific item preventing you from qualifying for two of the programmes relevant to your stage" is. YÖN's premise is that a structured readiness evaluation can surface that specificity — and that doing so before any outreach saves both the founder and the evaluator significant time.
 
-Investors have the mirror-image problem: they receive far more startups than fit their thesis, and the filtering work is manual and repetitive. Stage, sector, geography, cheque size and minimum readiness are stable, explicit criteria — but nothing applies them automatically before the deal reaches a human.
+## Product Model
 
-YÖN's product bet is that the same underlying evaluation can serve both sides: a structured readiness assessment produces a score for the founder and a filter for the investor.
+### Intended Founder Journey
 
-## The Product
+YÖN is designed around a seven-stage loop:
 
-### Entrepreneur journey
+1. **Assessment** — A structured intake covering company, team, product and traction, financials and target, and document readiness.
+2. **Financing Path** — Based on assessment results, YÖN surfaces the financing routes that are relevant to the startup's current profile (grant programmes, accelerators, angel, VC, or a recommendation to validate further before approaching any source). YÖN clarifies the path; it does not guarantee eligibility or funding outcomes.
+3. **Readiness Diagnosis** — An overall readiness score against a target threshold, with a per-category breakdown.
+4. **Critical Gaps** — The specific items blocking progress, ranked by priority, with the reason each gap matters to the relevant financing source.
+5. **Personalized Action Plan** — A structured roadmap for closing the identified gaps in the right order.
+6. **Progress Tracking** — An ongoing view of progress against the action plan as the founder works through it.
+7. **Re-assessment** — The loop closes: as gaps close, the founder re-evaluates and the financing path updates accordingly.
 
-1. **Assessment** (`/girisim/degerlendirme`) — a five-section intake covering company, team, product and traction, financials and target, and document readiness. The final section drives the live model: pitch deck, financial model, incorporation status and cap table. A side panel updates the projected score and match count as answers change.
-2. **Readiness report** (`/girisim/rapor`) — an overall score against a target threshold, a per-category breakdown (Team, Traction, Market, Financial structure, Document readiness), and prioritised gaps ranked high/medium/low with the reason each one matters to an investor.
-3. **Matched investors** (`/girisim/yatirimcilar`) — matched funds with a fit percentage and an explicit criterion-by-criterion breakdown showing which criteria are met and which are not. Below them sit **locked** investors, each labelled with the specific gap blocking the match and the fit score that gap would unlock.
+### What the Prototype Implements
 
-The loop is the point: closing a gap in step 1 raises the score in step 2 and moves a locked investor into the open list in step 3, in real time, without a page reload.
+The current prototype covers the majority of the founder-facing journey:
 
-### Investor journey
+| Journey Stage | Prototype Screen | Status |
+|---|---|---|
+| Assessment | `/girisim/degerlendirme` | ✅ Implemented |
+| Financing Path | _(derived from assessment; no dedicated screen)_ | 🔲 Not a standalone screen in this build |
+| Readiness Diagnosis | `/girisim/rapor` | ✅ Implemented |
+| Critical Gaps | Section within `/girisim/rapor` | ✅ Implemented |
+| Personalized Action Plan | `/girisim/yol-haritasi` | ✅ Implemented |
+| Progress Tracking | `/girisim/ilerleme` | ✅ Implemented |
+| Re-assessment | _(intended next iteration of the loop)_ | 🔲 Not a standalone completed feature |
 
-1. **Investment criteria** (`/yatirimci/kriterler`) — sector focus, stage, geography, cheque range, a draggable minimum-readiness threshold, and additional criteria set to required / preferred / not needed. A live panel recomputes how many startups in the pool still qualify as the criteria change, alongside "flexibility scenarios" showing what relaxing a given constraint would yield.
-2. **Deal flow** (`/yatirimci/dealflow`) — the filtered pipeline with status tabs (new / reviewed / interested), showing readiness, fit and criteria-match count per startup, plus how many startups were filtered out automatically.
-3. **Startup detail** (`/yatirimci/girisim/:id`) — the full profile: reported metrics, MRR trend, readiness breakdown by category, document checklist, an explicit "why this matched" list, risks, and accept/pass actions that return to the deal flow.
+The implemented founder flow demonstrates the core interaction model: changing an assessment answer updates the readiness diagnosis, identified gaps and action plan through a shared state model.
+
+## Financing Path
+
+A central product idea in YÖN is that not every startup should be approaching every financing source — and arriving at the wrong door before you're ready is costly for both sides. Based on the assessment, YÖN surfaces the routes that are most relevant to the startup's current profile: public grant programmes (e.g. TÜBİTAK/BiGG, KOSGEB), accelerator tracks, angel networks, or venture capital. For startups that are not yet ready for any structured financing, it surfaces that conclusion too, along with the specific steps needed to get there.
+
+YÖN does not determine eligibility or guarantee outcomes. It clarifies the landscape so the founder can make a more informed decision about where to focus preparation effort.
+
+## Investor Layer
+
+The prototype includes a complete investor-side journey: investment criteria configuration (`/yatirimci/kriterler`), a filtered deal-flow pipeline (`/yatirimci/dealflow`), a detailed startup profile view (`/yatirimci/girisim/:id`), and a matched-investors screen for the founder (`/girisim/yatirimcilar`) showing fit scores and per-criterion match breakdowns.
+
+This layer is fully implemented and navigable in the prototype. It is not, however, the primary positioning of the product. YÖN's core value proposition is founder-facing: clarifying the path to financing and building readiness to walk it. The investor layer demonstrates how the same underlying readiness evaluation could support the other side of the table — but investor matching is a secondary consideration in the current product direction, not the lead feature.
 
 ## My Role
 
 Sole developer. I implemented the entire application:
 
-- Translated the seven approved screens into React components without redesigning them, including sampling the colour and typography tokens from the design document into a CSS custom-property layer.
-- Designed the shared readiness state layer (`src/state/profile.tsx`) — a React context that owns the founder's readiness answers and *derives* the score and investor count from them, so every screen reads one source of truth instead of holding its own copy.
+- Translated seven approved screens into React components without redesigning them, sampling colour and typography tokens from the design document into a CSS custom-property layer.
+- Designed the shared readiness state layer (`src/state/profile.tsx`) — a React context that owns the founder's assessment answers and *derives* the score, gap list and investor count from them, so every screen reads one source of truth rather than maintaining its own copy.
 - Implemented the scoring and unlock rules: per-field score and investor deltas, clamping, and the mapping from a specific missing item to the specific investor it blocks.
 - Implemented the investor-side criteria model: a breadth × headroom × strictness calculation that shrinks the qualifying pool as criteria tighten.
 - Built the shared component library (`Card`, `Btn`, `Chip`, `Pill`, `SegBar`, `Avatar`, `Check`, `Micro`) and the application shell with role-aware sidebar navigation.
@@ -60,43 +80,50 @@ A single-page React application with no server component. State lives in a React
 ```mermaid
 flowchart LR
     Browser --> Router[React Router 7]
-    Router --> Screens[7 screens]
+    Router --> Screens[Prototype screens]
     Screens --> Profile[ProfileProvider: readiness state]
     Screens --> Data[data.ts: typed content]
-    Profile --> Derive[derive: score + investor count + unlocks]
+    Profile --> Derive[derive: score + gaps + investor count]
     Derive --> Screens
     Screens --> UI[Shared UI + motion components]
 ```
 
 - **Frontend:** React 19, TypeScript (strict), Vite 6, React Router 7, Framer Motion 13.
-- **State:** a single React context provider. Readiness answers are the only stored state; score, match count and unlocked investors are all derived values, never stored.
-- **Styling:** hand-written CSS split into a token layer, a base layer, and per-surface layers. No UI framework.
-- **Fonts:** Plus Jakarta Sans and IBM Plex Mono bundled through `@fontsource`, so the app has no external CDN dependency at runtime.
+- **State:** a single React context provider. Assessment answers are the only stored state; score, gap list, match count and investor unlocks are all derived values, never stored.
+- **Styling:** hand-written CSS split into a token layer, a base layer and per-surface layers. No UI framework.
+- **Fonts:** Plus Jakarta Sans and IBM Plex Mono via `@fontsource` — no external CDN dependency at runtime.
 - **Backend / database / authentication:** none. Not implemented in this repository.
-- **Deployment:** static build served on Vercel. No environment variables and no secrets are required to run it.
+- **Deployment:** static build on Vercel.
 
 ## Key Technical Decisions
 
-**Derive, never duplicate.** The context stores four readiness answers and nothing else. The score, the investor count and the set of unlocked investors are computed from those answers on every render. The alternative — storing a score and updating it alongside the answers — is exactly how two screens end up disagreeing. This is why changing one field in the assessment consistently updates the report and the investor list without any synchronisation code.
+**Derive, never duplicate.** The context stores assessment answers and nothing else. The score, the gap list, the investor count and the set of unlocked investors are computed from those answers on every render. This is why changing one field in the assessment consistently updates the diagnosis, the gap list and the investor screen without any synchronisation code.
 
-**Scoring as a data table, not branching logic.** Each field maps to a small table of `{ score, investors }` deltas per possible answer, applied against a base and clamped. Changing how much a missing financial model costs is a one-line edit to a constant, with no control flow to re-read. It also keeps the numbers auditable — you can see the whole weighting model in about fifteen lines.
+**Scoring as a data table, not branching logic.** Each field maps to a small table of `{ score, investors }` deltas per possible answer, applied against a base and clamped. Changing the weight of any single item is a one-line edit to a constant. The entire weighting model is auditable in roughly fifteen lines.
 
-**Locked matches modelled explicitly.** Rather than filtering investors out silently, each locked investor is bound to the readiness key that blocks it, so the UI can say *which* gap is in the way and what the fit would become once it closes. This turns a filter into product guidance, and it is what makes the founder loop (assess → report → matches → back to assess) worth walking.
+**Locked matches modelled explicitly.** Rather than filtering investors out silently, each locked investor is bound to the readiness key that blocks it, so the UI can state *which* gap is in the way and what the fit score would become once it closes. This turns a filter into actionable guidance — even in the context of a secondary product layer.
 
-**Keep the transition in the number itself.** The animated counter runs its own `requestAnimationFrame` loop and, when the target changes mid-animation, continues from wherever it currently is instead of snapping and restarting. A score moving 72 → 81 while the user watches is the moment the product's value lands; a jump-cut would waste it.
+**Keep the transition in the number itself.** The animated counter runs its own `requestAnimationFrame` loop and continues from its current value when the target changes mid-animation, rather than snapping and restarting. A score moving 72 → 81 while the user watches is the moment the product's value lands; a jump-cut would waste it.
 
 **A segmented bar as the signature primitive.** `SegBar` renders a ratio as discrete vertical segments and can shade the span between the current value and a target threshold in a warning colour — one component covering the readiness bar, the category breakdowns, the criteria threshold slider and the live-result panel.
 
 ## Core Features
 
-- Multi-section startup assessment with live projected score and match count.
-- Readiness scoring with per-category breakdown and prioritised, explained gaps.
-- Investor matching with an explicit met / not-met criteria list per investor — matches are explainable, not opaque percentages.
+**Founder funding-readiness loop**
+- Multi-section startup assessment with a live projected score that updates as answers change.
+- Readiness diagnosis with an overall score against a target threshold and a per-category breakdown.
+- Critical gaps ranked by priority with an explanation of why each gap matters to the relevant financing source.
+- Personalised action plan and progress tracking for working through the gaps.
+
+**Investor layer** *(implemented in the prototype; secondary to the founder journey)*
+- Investor matching with an explicit met / not-met criteria list per investor — fit is explainable, not an opaque percentage.
 - Locked matches tied to a specific missing item, showing the fit score that closing it would unlock.
 - Investor criteria configuration with a live qualifying-pool count that recomputes as sectors, stages, geographies, threshold and strictness change.
-- Deal-flow list with status tabs and per-startup readiness / fit / criteria-match indicators.
-- Startup detail view with reported metrics, MRR trend, readiness breakdown, "why this matched" reasoning and risk list.
-- A complete design system: tokens, shared components, and a single coherent motion language with reduced-motion support.
+- Deal-flow pipeline with status tabs and per-startup readiness / fit indicators.
+- Startup detail view with readiness breakdown, "why this matched" reasoning and risk list.
+
+**Product foundation**
+- A complete design system: tokens, shared components and a single coherent motion language with reduced-motion support at both the library and CSS levels.
 
 ## Technical Challenges
 
@@ -108,50 +135,51 @@ flowchart LR
 
 ## Product / Engineering Outcome
 
-A complete, deployed, interactive prototype covering both sides of the product. All seven designed screens are implemented, both journeys are navigable end to end, and the core product loop — close a gap, watch the score and matches respond — is functional rather than mocked with static images.
+A complete, deployed, interactive prototype that covers the founder funding-readiness journey across multiple screens and implements the investor layer as a secondary but fully navigable flow. All designed screens are implemented, both journeys are walkable end to end, and the core product loop — change an answer, watch the readiness score, the gap list and the action plan respond — is functional rather than mocked.
 
-What it is not: there is no backend, no user accounts, no persistence and no real investor data. The repository contains no metrics about usage, and none are claimed.
+What it is not: there is no backend, no user accounts, no persistence and no real investor or financing-source data. The repository contains no usage metrics, and none are claimed.
 
 ## Current Status
 
-**Completed**
-- All 7 designed screens, implemented to the approved design.
-- Entrepreneur flow: assessment → readiness report → matched investors, including the return loop.
-- Investor flow: criteria → deal flow → startup detail, including the return-after-decision path.
-- Shared readiness state with derived scoring, investor counts and unlock logic.
-- Investor criteria model with live qualifying-pool recalculation.
+**Implemented**
+- Assessment (`/girisim/degerlendirme`) — five-section intake with live score and gap projection.
+- Readiness diagnosis and critical gaps (`/girisim/rapor`) — score vs. target threshold, per-category breakdown, prioritised gap list.
+- Personalised action plan (`/girisim/yol-haritasi`).
+- Progress tracking (`/girisim/ilerleme`).
+- Investor layer: matched investors (`/girisim/yatirimcilar`), criteria configuration (`/yatirimci/kriterler`), deal-flow pipeline (`/yatirimci/dealflow`), startup detail (`/yatirimci/girisim/:id`).
+- Shared readiness state with derived scoring, gap list and investor unlock logic.
 - Design token system, shared component library, motion system, reduced-motion support.
-- Production build and Vercel deployment.
+- Production build on Vercel.
 
-**In development / not implemented**
+**Not implemented in this prototype**
+- Financing Path as a dedicated screen (currently implicit in assessment output; no standalone route).
+- Re-assessment as a completed end-to-end loop closure.
 - Backend API, database and persistence.
 - Authentication and user accounts.
-- Real investor and startup data; all content is sample data from the design.
-- PDF export — the report screen has a PDF action in the UI, but no generation is implemented behind it.
-- The sidebar's "Interests" and "Settings" links intentionally route to a placeholder screen, since no design exists for them.
+- Real financing-source or investor data — all content is sample data.
+- PDF export — action present in the UI; no generation implemented.
 
-**Planned**
-- Not documented in the repository.
+## Demo & Deployment
 
-## Screenshots / Demo
+**Production site:** https://yon-dev.vercel.app/
+- `/` — current YÖN landing page.
+- Product routes — Coming Soon; not yet accessible in production.
 
-Live demo: **https://yon-dev.vercel.app/**
-
-No screenshot files are stored in the repository. Suggested captures, by route:
+**Development previews:** branch-based Vercel preview deployments expose the full interactive prototype for development and review. All screens and both journeys (founder and investor layer) are navigable there.
 
 | # | Screen | Route | What it shows |
-|---|--------|-------|---------------|
-| 01 | Entry & role selection | `/` | Product framing and the split into the two journeys |
-| 02 | Startup assessment | `/girisim/degerlendirme` | Readiness intake with the live score/match panel |
-| 03 | Investment readiness report | `/girisim/rapor` | Score vs. target threshold, category breakdown, prioritised gaps |
-| 04 | Matched investors | `/girisim/yatirimcilar` | Fit scores, per-criterion match breakdown, locked matches |
-| 05 | Investment criteria | `/yatirimci/kriterler` | Criteria configuration with live qualifying-pool count |
-| 06 | Deal flow | `/yatirimci/dealflow` | Filtered pipeline with status tabs and fit indicators |
-| 07 | Startup detail | `/yatirimci/girisim/:id` | Metrics, MRR trend, "why this matched", risks, decision actions |
+|---|--------|-------|--------------|
+| 01 | Entry | `/` | Product positioning and role selection |
+| 02 | Assessment | `/girisim/degerlendirme` | Intake form with live score and gap panel |
+| 03 | Readiness diagnosis | `/girisim/rapor` | Score vs. threshold, category breakdown, gaps |
+| 04 | Action plan | `/girisim/yol-haritasi` | Structured steps to close identified gaps |
+| 05 | Progress tracking | `/girisim/ilerleme` | Progress view against the plan |
+| 06 | Matched investors | `/girisim/yatirimcilar` | Fit scores, per-criterion breakdown, locked matches |
+| 07 | Investor criteria | `/yatirimci/kriterler` | Criteria configuration with live qualifying-pool count |
+| 08 | Deal flow | `/yatirimci/dealflow` | Filtered pipeline with status tabs |
+| 09 | Startup detail | `/yatirimci/girisim/:id` | Full profile: readiness, fit reasoning, risks |
 
-*[Screenshot placeholder — images not captured yet.]*
-
-The most useful thing to demonstrate live is the loop: on screen 02, set *Financial model* to *Var*, then walk forward to 03 and 04 and watch the score, the report gaps and the investor list respond.
+The most useful thing to demonstrate is the core loop: on screen 02, change any readiness answer and walk forward to screens 03, 04 and 05 to watch the score, the gap list and the plan respond in real time.
 
 ## Tech Stack
 
@@ -179,10 +207,14 @@ Public demo: https://yon-dev.vercel.app/
 
 ## What I Learned
 
-**Deriving beats storing.** Putting the score in state alongside the answers would have worked on day one and broken on day three. Making the score a pure function of the answers meant that every new screen reading it was correct by construction — and it made the product's most important interaction (the improvement loop) fall out of the architecture rather than needing to be built.
+**Deriving beats storing.** Putting the score in state alongside the answers would have worked on day one and broken on day three. Making the score a pure function of the answers meant that every new screen reading it was correct by construction — and it made the product's most important interaction (the improvement loop) fall out of the architecture rather than needing to be built separately.
 
-**Explainability is a data-modelling decision, not a copywriting one.** "92% fit" is useless on its own. Getting to "matched on sector, geography, stage, readiness threshold and cheque range; not matched on traction" required modelling criteria as individually evaluable items from the start. Once the data has that shape, the interface can be honest; if the data is just a number, no amount of UI can recover the reasoning.
+**Explainability is a data-modelling decision, not a copywriting one.** "92% fit" is useless on its own. Getting to "matched on sector, geography, stage and readiness threshold; not matched on traction" required modelling criteria as individually evaluable items from the start. Once the data has that shape, the interface can be honest; if the data is just a number, no amount of UI work can recover the reasoning.
 
-**Implementing someone else's design well is a distinct skill.** The constraint was to build the approved screens, not to improve them. That pushed the engineering effort into places that actually mattered — a token layer faithful to the source, one motion family instead of per-screen animation, a single primitive (`SegBar`) reused across four different contexts — and produced a more coherent result than redesigning as I went would have.
+**Translating a visual system into a functional product.** The constraint was to build the approved screens faithfully, not to redesign them — which pushed the engineering effort into what actually mattered: a token layer faithful to the source, a single motion language instead of per-screen animation, and a shared primitive (`SegBar`) reused across four different contexts. Adapting a reference-driven interface means holding three things in balance at once: visual intent, interaction fidelity and responsive behaviour. When they pull in different directions, the answer is almost always to resolve the conflict in the component layer rather than in the layout.
 
 **Know what a prototype is claiming.** This application looks like a working system, which makes it easy to over-describe. Keeping the boundary explicit — real logic here, sample data there, no backend at all — is part of building the thing responsibly, especially when the demo is shown to people evaluating the product.
+
+---
+
+[Türkçe versiyon için bkz. yon.md](./yon.md)
