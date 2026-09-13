@@ -217,4 +217,4 @@ Public demo: https://yon-dev.vercel.app/
 
 ---
 
-[Türkçe versiyon için bkz. yon.md](./yon.md)
+[Türkçe versiyon için yon.md](./yon.md)
